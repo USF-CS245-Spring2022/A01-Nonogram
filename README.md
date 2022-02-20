@@ -1,4 +1,6 @@
-# Assignment01-Nonogram
+# Assignment 1 | Nonogram
+Mia Kobayashi  
+24 February 2022  
 
 ## Nonogram
 
