@@ -6,6 +6,7 @@ package Lab02.Nonogram;
 public class Lab02 {
 
     private boolean[][] board;
+    private int[][] allRows, allCols;
     private int nRows, nCols;
 
 
@@ -15,6 +16,8 @@ public class Lab02 {
      * @param cols, all cols board should have
      */
     public Lab02(int[][] rows, int[][] cols) {
+        this.allRows = rows;
+        this.allCols = cols;
         this.nRows = rows.length;
         this.nCols = cols.length;
         this.board = new boolean[this.nRows][this.nCols];
@@ -22,14 +25,14 @@ public class Lab02 {
 
 
     /**
-     * Input an inital starting board for Nonogram.
+     * Checks initial Nonogram board to see if it follows beginning constraints
      * @param rows
      * @param cols
      * @throws IllegalArgumentException
      */
-    public void inputBoard(int[][] rows, int[][] cols) throws IllegalArgumentException {
+    public void checkInitBoard(int[][] rows, int[][] cols) throws IllegalArgumentException {
 
-        System.out.println(this.nRows + " " + this.nCols);
+        System.out.println(this.nRows + "x" + this.nCols + " board");
 
         //checks if board is within 9x9 constraints
         if (this.nRows > 9 || this.nCols > 9) {
@@ -37,68 +40,106 @@ public class Lab02 {
             throw new IllegalArgumentException("Puzzle exceeds the max of a 9x9 matrix.");
         }
 
-//        if (rows[0].length <= 2 && cols[0].length <=2) {
-//            throw new IllegalArgumentException("Puzzle exceeds more than the 2-block of black squares for every row & col constraint.");
-//        }
-
-        for (int row = 0; row < this.nRows; row++) {
-            for (int col = 0; col < this.nCols; col++) {
-                this.board[row][col] = false;
+        //checks if puzzle does not exceed 2-sets of blocks per row & col
+        for (int[] arrR : rows) {
+//            System.out.println(arrR.length);
+            if (arrR.length > 2) {
+                throw new IllegalArgumentException("Puzzle exceeds the constraint of having more than 2 sets of blocks.");
+            }
+        }
+        for (int[] arrC : cols) {
+//            System.out.println(arrC.length);
+            if (arrC.length > 2) {
+                throw new IllegalArgumentException("Puzzle exceeds the constraint of having more than 2 sets of blocks.");
             }
         }
     } //end inputBoard()
 
 
-//     public boolean isSafe(int row, int col, int numBlocks) {
+     public boolean isSafe(int rowStart, int colStart, int numBlocks) {
+
+        if (numBlocks + rowStart > nCols) {
+            System.out.println(numBlocks + rowStart + " " + nCols);
+            return false;
+        }
+
+//        for (int row = rowStart; rowStart < nRows; rowStart++) {
+//            for (int col = colStart; colStart < nCols; colStart++) {
 //
-//     	//check if num is already in row, change col#
-//     	for (int c = 0; c < boardLen; c++) {
-//     		if (this.board[row][c] == ch) {
-//     			return false; //desiredNum cannot be placed here
-//     		}
-//     	}
-//
-//     	//check if num is already in col, change row#
-//     	for (int r = 0; r < boardLen; r++) {
-//     		if (this.board[r][col] == ch) {
-//     			return false; //desiredNum cannot be placed here
-//     		}
-//     	}
-//
-//     	//check if num is already in box, checking 1 of 9 3x3 boxes
-//     	int sqrt = (int)Math.sqrt(boardLen); //3
-//     	int boxRowStart = row - (row % sqrt); //(row/3)*3; //start 0, 3, or 6		//alt: row - (row % sqrt);
-//     	int boxColStart = col - (col % sqrt); //(col/3)*3; //start 0, 3, or 6		//alt: col - (col % sqrt);
-//     	for (int r = boxRowStart; r < boxRowStart + sqrt; r++) {
-//     		for (int c = boxColStart; c < boxColStart + sqrt; c++) {
-//     			if (this.board[r][c] == ch) {
-//     				return false; //desiredNum cannot be placed here
-//     			}
-//     		}
-//     	}
-//
-//     	return true; //safe to place desiredNum
-//     } //end isSafe()
+//            }
+//        }
+     	return true; //safe to place blocks
+     } //end isSafe()
 
 
-    // /** nonogram method solves the puzzle with the given two parameters
-    //   * @param double array of integers that represent the columns
-    //   * @param double array of integers that represent the rows
-    //   * @returns double boolean array of solution
-    //   */
-    // public static boolean[][] solveNonogram(int[][] columns, int[][] rows){
-    // //[TODO: your solution]
+     /** nonogram method solves the puzzle with the given two parameters
+       * @param double array of integers that represent the columns
+       * @param double array of integers that represent the rows
+       * @returns double boolean array of solution
+       */
+     public boolean solveNonogram(int rowStart, int colStart, int numBlocks){
+     //[TODO: your solution]
 
-    // //backtracking
-    // //find first empty box,
-    // //check row, col, -> isSafe()
-    // //then place down blocks
-    // //repeat
+     //backtracking
+     //find first empty box,
+     //check row, col, -> isSafe()
+     //then place down blocks
+     //repeat
 
-    // }
+         if (rowStart >= nRows) {
+            return false;
+         }
+
+//         numBlocks = allCols[colStart][0]; //0 or 1 for second []
+
+         //backtrack
+         System.out.println(nRows + "nRows");
+
+//         if (isSafe(rowStart, colStart, numBlocks) == true) {
+             placeBlocks(rowStart, colStart, numBlocks);
+
+             if (colStart + numBlocks == nCols) {
+                 rowStart += 1;
+             }
+             else {
+                 colStart += numBlocks + 1; //plus 1 bc there needs to be at least a gap between sets of blocks
+                 //this is where you get the next numBlocks
+             }
+             //get net numBlocks fixme
+//         numBlocks =
+
+             //move to next place on board
+             if (solveNonogram(rowStart, colStart, numBlocks) == true) {
+                 return true;
+             }
+             else {
+                 removeBlocks(rowStart, colStart, numBlocks);
+             }
+//         }
+
+         return false; //cannot solve puzzle
+     } //end solveNonogram()
 
 
-    public static void printBoard(int[][] rows, int[][] cols, boolean[][] result) {
+    private void placeBlocks(int row, int col, int numBlocks) {
+         for (int c = 0; c < numBlocks; c++) {
+             this.board[row][col + c] = true;
+         }
+    }
+
+    private void removeBlocks(int row, int col, int numBlocks) {
+         for (int c = 0; c < numBlocks; c--) {
+             this.board[row][col + c] = false;
+         }
+    }
+
+
+    public void solve() {
+         solveNonogram(0, 0, 0);
+    }
+
+
+    public void printBoard(int[][] rows, int[][] cols, boolean[][] result) {
         System.out.print("    ");
         for (int i = 0; i < cols.length; i++) {
             System.out.print(cols[i][0] + " ");
@@ -113,7 +154,7 @@ public class Lab02 {
 
         System.out.println();
 
-        char block = 'T';
+        char block = '□';
         for (int i = 0; i < rows.length; i++) {
             System.out.print(rows[i][0] + " " + rows[i][1] + " ");
 
@@ -132,16 +173,15 @@ public class Lab02 {
 
 
     public static void main(String[] args){
-        //fixme test your code
         int[][] columns = {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
         int[][] rows = {{0,5}};
 
         Lab02 nonogram = new Lab02(rows, columns);
 
-        nonogram.inputBoard(rows, columns);
+        nonogram.checkInitBoard(rows, columns);
         nonogram.printBoard(rows, columns, nonogram.board);
-//        nonogram.solveNonogram();
-//        nonogram.printBoard();
+        nonogram.solve();
+        nonogram.printBoard(rows, columns, nonogram.board);
 
 //        boolean[][] result = {{true,true,true,true,true}, {}};
 //        // boolean[][] result = solveNonogram(columns, rows);
