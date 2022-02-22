@@ -43,16 +43,31 @@ public class Lab02 {
 
     public static int isSafe(int[][] rows, int[][] cols, int rowStart, int colStart, int numBlocks, boolean[][] board) {
 
+        // int colReqSum = 0, rowActSum = 0;
+        // for (int i = 0; i < cols.length; i++) {
+        //     colReqSum = cols[i][0] + cols[i][1];
+        //     for(int j = 0; j < rows.length; j++) {
+        //         rowActSum = 0;
+        //         if (board[j][i])
+        //             rowActSum++;
+        //     }
+        //     if (rowActSum > colReqSum)
+        //         return -1;
+        // }
+
 
         //false row = 1
         //false col = -1
         //true = 0
         System.out.println("in isSafe()");
 
-        if (numBlocks + rowStart > cols.length) { //check if total blocks in row will satisfy total col length (is within bounds of col length)
-            System.out.println(numBlocks + rowStart + " " + cols.length);
-            return 1;
-        }
+        //possibly DON'T need??? (worthless??)
+        // if (numBlocks + rowStart == cols.length-1) { //check if total blocks in row will satisfy total col length (is within bounds of col length)
+        //     System.out.println("nb: " + numBlocks);
+        //     System.out.println("rs: " + rowStart);
+        //     System.out.println(numBlocks + rowStart + " " + cols.length + " hi");
+        //     // return 1;
+        // }
 
         int totalBlocksInRow = rows[rowStart][0] + rows[rowStart][1];
         int currentBlocksInRow = numBlocks;
@@ -69,22 +84,29 @@ public class Lab02 {
             }
         }
 
-        int totalBlocksInCol;
-        int currentBlocksInCol = 0;
-        for (int c = colStart; c < cols.length; c++) { //check if total blocks will satisfy col block req. (will total number of blocks equal the col's total?)
-            totalBlocksInCol = cols[c][0] + cols[c][1];
 
-            //fixme
+
+        // int totalBlocksInCol;
+        int totalBlocksInCol = cols[colStart][0] + cols[colStart][1]; //fixme???, works as colStart?? bruh, why
+
+        System.out.println("totalBlocks: " + totalBlocksInCol);
+
+        if (totalBlocksInCol == 0) { //don't want to place any blocks on this board position
+            System.out.println("totalBlocks = 0");
+            return -1; //inc colStart
+        }
+
+
+
+        int currentBlocksInCol = 0;
+
+        for (int c = colStart; c < cols.length; c++) { //check if total blocks will satisfy col block req. (will total number of blocks equal the col's total?)
 
             for (int r = 0; r < rows.length; r++) {
                 if (board[r][c] == true) {
                     currentBlocksInCol += 1;
                 }
             }
-
-            // if (totalBlocksInCol == 0) { //don't want to place any blocks on board
-            //     return -1;
-            // }
 
             System.out.println(totalBlocksInCol + " totalBlocksInCol, :" + c);
             System.out.println(currentBlocksInCol + " currentBlocksInCol");
@@ -130,6 +152,14 @@ public class Lab02 {
         boolean placed = false;
 
         while (placed == false) {
+
+            if (rowStart >= rows.length) {
+                System.out.println("completed board?");
+                return true;
+            }
+
+            System.out.println("1b: rowStart: " + rowStart + " colStart: " + colStart + " numBlocks: " + numBlocks); //del
+
             int safe = isSafe(rows, cols, rowStart, colStart, numBlocks, board);
 
             if (safe == 0) { //true isSafe()
@@ -167,11 +197,13 @@ public class Lab02 {
 
             if (safe == 1) { //false isSafe(), row error
                 rowStart += 1; //fixme?
+                //placed = false
             }
 
             if (safe == -1) { //false isSafe(), col error
                 System.out.println("col++");
                 colStart += 1;
+                //placed = false
             }
         }
 //
@@ -194,11 +226,6 @@ public class Lab02 {
         //check row, col, -> isSafe()
         //then place down blocks
         //repeat
-
-        if (rowStart >= rows.length) {
-            System.out.println("hi");
-            return false;
-        }
 
         return false; //cannot solve puzzle
     } //end solve()
@@ -253,8 +280,8 @@ public class Lab02 {
 
 
     public static void main(String[] args){
-        int[][] columns = {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
-        int[][] rows = {{0,5}};
+        int[][] columns = {{0,0}, {0,1}, {0,0}, {0,0}, {0,1}};
+        int[][] rows = {{1, 1}};
 
         boolean[][] board = checkInitBoard(rows, columns);
         printBoard(rows, columns, board);
