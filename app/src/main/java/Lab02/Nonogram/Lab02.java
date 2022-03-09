@@ -1,9 +1,9 @@
 package Lab02.Nonogram;
 //@name: Mia Kobayashi
-//@date & version: 23 Feb. 2022, v.2
+//@date & version: 8 March 2022, v.2
 //CS245 Lab02: Nonogram
 
-public class Lab02_2 {
+public class Lab02 {
 
     /**
      * Checks initial Nonogram board to see if it follows beginning constraints
@@ -12,7 +12,7 @@ public class Lab02_2 {
      * @param cols
      * @throws IllegalArgumentException
      */
-    public static boolean[][] checkInitBoard(int[][] rows, int[][] cols) throws IllegalArgumentException {
+    public static void checkInitBoard(int[][] rows, int[][] cols) throws IllegalArgumentException {
 
         System.out.println(rows.length + "x" + cols.length + " board");
 
@@ -32,15 +32,12 @@ public class Lab02_2 {
                 throw new IllegalArgumentException("Puzzle exceeds the constraint of having more than 2 sets of blocks.");
             }
         }
-
-        boolean[][] board = new boolean[rows.length][cols.length];
-        return board;
     } //end checkInitBoard()
 
 
     private static boolean checkColSum(int[][] rows, int[][] cols, int colStart, boolean[][] board) {
         for (int c = colStart; c < cols.length; c++) { //check if total blocks will satisfy col block req. (will total number of blocks equal the col's total?)
-            int blockReq = cols[c][0] + cols[c][1]; //fixme???, works as colStart?? bruh, why
+            int blockReq = cols[c][0] + cols[c][1];
 
             if (blockReq == 0) { //don't want to place any blocks on this board position
                 return false; //inc colStart
@@ -57,7 +54,7 @@ public class Lab02_2 {
             }
         }
         return true;
-    }
+    } //end checkColSum()
 
 
     private static int isSafe(int[][] rows, int[][] cols, int colStart, boolean[][] board) {
@@ -68,71 +65,60 @@ public class Lab02_2 {
         //false row = 1
         //false col = -1
         //true = 0
-    }
+    } //end isSafe()
 
 
     private static boolean checkSpaces(int numRows, int[][] cols, boolean[][] board) {
         for (int c = 0; c < cols.length; c++) {
             int blockSet1 = cols[c][0]; //potentially be 0
             int blockSet2 = cols[c][1];
-
-            //check for first set, then see if there is a space
-            //if no space, then return false
-
-            //var that needs to be renewed at some point
-            //counter??? the moment you hit true, start counter
-            //in loop, if counter == first arg of thingie (col)
-            //then check one below & make sure it's a space
-
-            //zero problem:
-            //
-
-            int counter1 = 0;
-            int counter2 = 0;
-            boolean start = false;
+            int counter = 0;
+            boolean start;
             int r = 0;
 
             if (blockSet1 != 0) { //only check for one set of blocks
-                for (; r < numRows; r++) {
-                    if (board[r][c] == true)
+                for (; r < numRows - 1; r++) {
+                    if (board[r][c])
                         start = true;
                     else {
                         start = false;
-                        counter1 = 0;
+                        counter = 0;
                     }
-                    if (start)
-                        counter1++;
-                    if (counter1 == blockSet1)
-                        if (board[r+1][c])
+                    if (start == true)
+                        counter++;
+                    if (counter == blockSet1) {
+                        if (board[++r][c]) // next is filled
                             return false;
-                        else {
-                            r++;
+                        else // no problem
                             break;
-                        }
+                    }
                 }
             }
-            start = false;
+            counter = 0;
             //check for 2 sets of blocks
             for (; r < numRows; r++) {
-                if (board[r][c] == true)
+                if (board[r][c])
                     start = true;
                 else {
                     start = false;
-                    counter2 = 0;
+                    counter = 0;
                 }
-                if (start)
-                    counter2++;
-                if (counter2 == blockSet2 && board[r+1][c])
-                    return false;
+                if (start == true)
+                    counter++;
+                if (counter == blockSet2)
+                    break;
             }
+            if (counter != blockSet2)
+                return false;
         }
         return true; //nothing wrong w spaces
-    }
+    } //end checkSpaces()
 
 
     private static boolean solve(int[][] rows, int[][] cols, int rowStart, int colStart, int numBlocks, boolean blockIdx, boolean[][] board) {
 
         if (rowStart >= rows.length) { //is completed board?
+            System.out.println("returning true");
             return true;
         }
 
@@ -167,6 +153,7 @@ public class Lab02_2 {
                         colStart = 0;
 
                         if (rowStart >= rows.length) { //is completed board?
+                            System.out.println("returning true");
                             return true;
                         }
 
@@ -186,13 +173,14 @@ public class Lab02_2 {
                     }
 
                     if (solve(rows, cols, rowStart, colStart, numBlocks, blockIdx, board) == true) {
+                        System.out.println("returning true");
                         return true;
                     }
                 }
-                else {
-                    removeBlocks(rowStart, colStart, numBlocks, board);
-                }
-            }
+//                else {
+                removeBlocks(rowStart, colStart, numBlocks, board);
+//                }
+            } //end safe == 0
             if (safe == -1) { //false isSafe(), col error
                 System.out.println("col++");
                 colStart += 1;
@@ -200,8 +188,10 @@ public class Lab02_2 {
             }
         } //end while
 
+        System.out.println("returning false");
         return false;
-    }
+    } //end solve()
+
 
     public static boolean[][] solveNonogram(int[][] columns, int[][] rows) {
         boolean[][] returnBoard = new boolean[rows.length][columns.length];
@@ -258,39 +248,40 @@ public class Lab02_2 {
 
 
     public static void main(String[] args){
-//        int[][] columns = {{0,0}, {0,1}, {0,0}, {0,0}, {0,1}};
-//        int[][] rows = {{1, 1}};
-//
-//        boolean[][] board = checkInitBoard(rows, columns);
-//        printBoard(rows, columns, board);
-//        board = solveNonogram(columns, rows, board);
-//        printBoard(rows, columns, board);
-//
-//
-//
-//        int[][] columns2 = {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
-//        int[][] rows2 = {{0, 5}};
-//
-//        boolean[][] board2 = checkInitBoard(rows2, columns2);
-//        printBoard(rows2, columns2, board2);
-//        board2 = solveNonogram(columns2, rows2, board2);
-//        printBoard(rows2, columns2, board2);
+        int[][] columns = {{0,0}, {0,1}, {0,0}, {0,0}, {0,1}}; //does not solve
+        int[][] rows = {{1, 1}};
+
+        checkInitBoard(rows, columns);
+        // printBoard(rows, columns, board);
+        boolean[][] board = solveNonogram(columns, rows);
+        printBoard(rows, columns, board);
 
 
-        // int[][] columns1 = {{0,2}, {0,2}, {0,2}, {0,1}, {0,1}, {0,1}, {0,2}, {0,2}, {0,1}};
+
+        // int[][] columns2 = {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}}; //solves
+        // int[][] rows2 = {{0, 5}};
+
+        //  checkInitBoard(rows2, columns2);
+        // // printBoard(rows2, columns2, board2);
+        // boolean[][] board2 = solveNonogram(columns2, rows2);
+        // printBoard(rows2, columns2, board2);
+
+
+        // int[][] columns1 = {{0,2}, {0,2}, {0,2}, {0,1}, {0,1}, {0,1}, {0,2}, {0,2}, {0,1}}; //does not solve
         // int[][] rows1 = {{4,3}, {3,4}};
 
-        // boolean[][] board1 = checkInitBoard(rows1, columns1);
+        // checkInitBoard(rows1, columns1);
+        // // printBoard(rows1, columns1, board1);
+        // boolean[][] board1 = solveNonogram(columns1, rows1);
         // printBoard(rows1, columns1, board1);
-        // board1 = solveNonogram(columns1, rows1, board1);
-        // printBoard(rows1, columns1, board1);
 
 
-        int[][] columns3 = {{1,1}, {2,1}, {0,2}, {1,1}, {1,1}};
-        int[][] rows3 = {{1,1}, {0,1}, {0,5}, {0,1}, {1,1}};
+        // int[][] columns3 = {{1,1}, {2,1}, {0,2}, {1,1}, {1,1}}; //does not solve
+        // int[][] rows3 = {{1,1}, {0,1}, {0,5}, {0,1}, {1,1}};
 
-        boolean [][]board3 = solveNonogram(columns3, rows3);
-        printBoard(rows3, columns3, board3);
+        // checkInitBoard(columns3, rows3);
+        // boolean [][]board3 = solveNonogram(columns3, rows3);
+        // printBoard(rows3, columns3, board3);
 //
 
 //        boolean[][] result = {{true,true,true,true,true}, {}};
