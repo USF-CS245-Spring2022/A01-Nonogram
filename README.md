@@ -2,6 +2,18 @@
 Mia Kobayashi  
 10 March 2022  
 
+**How the code works:**  
+This program recursively solves a Nonogram Puzzle (which must be a size within 9x9 and each row/column has no more than 2 sets of blocks (starting constraints).  
+An initial puzzle (two int[][] of columns and rows) is passed to solveNonogram() where it is then checked with checkInitBoard() method to see if it meets the starting constraints.  
+
+In the case that the puzzle does not meet the starting constraints, an IllegalArgumentException will be thrown.  
+
+If a puzzle is solveable, the program continues with solve().  
+Until the puzzle is solved, solve() is called recursively, taking potential sets of blocks by row, placing those blocks down, validates the blocks by checking the puzzle by column in isSafe(), and then repeats the process.  
+When a desired set of blocks is placed onto the puzzle board at a specific spot, the isSafe() method checks the entire puzzle by column to make sure that it meets the column sets of blocks requirements.  
+
+If a puzzle is unsolveable, the program will print, "This is an unsolvable Nonogram puzzle."  
+
 ## Nonogram
 
 The goal of this assignment is to demonstrate your understanding of arrays and recursion by solving these puzzles. 
