@@ -24,7 +24,7 @@ Nonogram is a logical puzzle with simple rules. Given a grid of squares, which m
 
 ## Example 1:
 <pre><code>Input: columns = {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}}; rows = {{0,5}}
-Output: {{T, T, T, T, T},{}}
+Output: {{T, T, T, T, T}}
 </code></pre>
 
 ## Example 2:
