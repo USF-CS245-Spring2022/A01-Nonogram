@@ -1,5 +1,5 @@
 // @author: Mia Kobayashi
-// @date & vesion: 9 March 2022, v.3
+// @date & version: 9 March 2022, v.3
 // CS245 Assignment 1: Nonogram
 
 package Lab02.Nonogram;
