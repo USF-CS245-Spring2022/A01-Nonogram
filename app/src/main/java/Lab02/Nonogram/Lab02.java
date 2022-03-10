@@ -1,3 +1,5 @@
+package Lab02.Nonogram;
+
 public class Lab02 {
 
     public static boolean[][] checkInitBoard(int[][] rows, int[][] cols) throws IllegalArgumentException {
@@ -51,11 +53,11 @@ public class Lab02 {
                     if (board[r][c] == true) { //if there is a block,
                         placedBlocks++; //count current set of blocks
                     }
-                    else { //if there is no block
+                    else { //if board[r][c] == false
                         placedBlocks = 0;
                     }
 
-                    if (placedBlocks == blockSet1) {
+                    if (placedBlocks == blockSet1) { //if
                         r++;
                         if (board[r][c]) { //next is filled
                             return false;
